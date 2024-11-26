@@ -14,6 +14,7 @@ public:
 
     void virtual withdraw();
     void virtual deposit();
+    void virtual display();
 };
 
 
