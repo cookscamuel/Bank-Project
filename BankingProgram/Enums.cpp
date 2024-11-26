@@ -1,7 +1,8 @@
 // To Use when the program starts up
 enum LoginChoice{
     LOGIN = 1,
-    REGISTER
+    REGISTER,
+    EXIT
 };
 
 // to use when an account is being created
