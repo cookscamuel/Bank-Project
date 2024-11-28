@@ -1,3 +1,5 @@
+// File to hold enums that represent selections within the menus.
+
 // To Use when the program starts up
 enum LoginChoice{
     LOGIN = 1,

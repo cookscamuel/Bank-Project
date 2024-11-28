@@ -2,6 +2,8 @@
 // PROG2100
 // 2024-11-14
 // DerivedAccounts.h
+// Header file for classes that derive from the Account class. Checkings, Savings, Fixed Deposit signatures are here.
+
 #ifndef DERIVED_ACCOUNTS_H
 #define DERIVED_ACCOUNTS_H
 

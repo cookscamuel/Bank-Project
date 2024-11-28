@@ -1,4 +1,4 @@
-
+-- Queries used to add the correct tables and relationships to the bank_system database.
 
 CREATE TABLE `account_types` (
   `type_id` int(3) NOT NULL,

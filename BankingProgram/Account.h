@@ -2,6 +2,7 @@
 // PROG2100
 // 2024-11-14
 // Account.h
+// Base class for Bank Account Types to derive from.
 
 class Account
 {

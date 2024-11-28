@@ -2,6 +2,8 @@
 // PROG2100
 // 2024-11-14
 // AccountHolder.h
+// Class used to store login and personal information for bank customers.
+
 #include <string>
 
 #ifndef ACCOUNT_HOLDER_H
