@@ -12,6 +12,7 @@
 class AccountHolder
 {
 private:
+    int id;
     std::string name;
     std::string address;
     std::string email;
@@ -28,6 +29,7 @@ public:
         int phone
     ): name(name), address(address), email(email), password(password), phone(phone){};
 
+    int getId() const { return id; }
     
     ~AccountHolder() = default;
 };

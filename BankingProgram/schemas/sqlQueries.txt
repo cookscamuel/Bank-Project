@@ -5,6 +5,9 @@ SELECT userId, email, password, name, address, phone FROM users WHERE email="$em
 all accounts related to a user
 SELECT * FROM active_accounts WHERE user_id="$userId";
 
+retrieve balance and account_number
+SELECT balance FROM accounts WHERE account_number="$accountNumber";
+
 retrieve balance
 SELECT balance FROM accounts WHERE account_number="$accountNumber";
 

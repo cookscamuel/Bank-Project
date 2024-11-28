@@ -10,29 +10,32 @@
 #include "Account.h"
 
 class SavingsAccount : public Account{
-    protected:
-        double interestRate;
     public:
-        SavingsAccount(int accountNumber, double balance, double interestRate): Account(accountNumber, balance), interestRate(interestRate){};
-        void withdraw() override;
-        void deposit() override;
+        SavingsAccount(int accountNumber, sqlite3 *dbHandler): Account(accountNumber, dbHandler){};
+        void withdraw(sqlite3 *dbHandler) override;
+        void deposit(sqlite3 *dbHandler) override;
         void display() override;
         void calculateInterest();
 };
 
 class CheckingAccount : public Account{
     public:
-        CheckingAccount(int accountNumber, double balance): Account(accountNumber, balance){};
-        void withdraw() override;
-        void deposit() override;
+        CheckingAccount(int accountNumber, sqlite3 *dbHandler): Account(accountNumber, dbHandler){
+
+        };
+        void withdraw(sqlite3 *dbHandler) override;
+        void deposit(sqlite3 *dbHandler) override;
         void display() override;
         void transferFunds();
 };
 
 class FixedDepositAccount : public Account{
+    protected:
+        double penalty = .075;
     public:
-        void withdraw() override; //this one has penalties
-        void deposit() override;
+        FixedDepositAccount(int accountNumber, sqlite3 *dbHandler): Account(accountNumber, dbHandler){};
+        void withdraw(sqlite3 *dbHandler) override; //this one has penalties
+        void deposit(sqlite3 *dbHandler) override;
         void display() override;
 };
 
