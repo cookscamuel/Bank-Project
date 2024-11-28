@@ -9,11 +9,15 @@
 
 
 #include <iostream>
-#include <sqlite3.h>
 
-static int selectQuery(void *data, int numColumns, char **columnValues, char **columnNames); // Function used for running selection queries.
+/*
+    Inserting Data:
+        Users must have unique email addresses and passwords.
+        Account types must be unique
 
-// Main Function
+*/
+
+
 int main() {
 
     sqlite3 *dbHandler; // Pointer variable used to carry out database interactions.
@@ -30,85 +34,134 @@ int main() {
     // Create a variable that will hold a query used to create tables for the database.
     const char *createTables = R"(
 
-        CREATE TABLE IF NOT EXISTS `account_types` (
-            `type_id` int(3) NOT NULL AUTO_INCREMENT,
-            `type` varchar(50) NOT NULL,
-            PRIMARY KEY (`type_id`)
+        CREATE TABLE IF NOT EXISTS account_types (
+            type_id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
+            type VARCHAR(50) UNIQUE NOT NULL
         );
 
-
-        CREATE TABLE IF NOT EXISTS `users` (
-            `user_id` int(11) NOT NULL AUTO_INCREMENT,
-            `email` varchar(100) NOT NULL,
-            `password` varchar(32) NOT NULL,
-            `name` varchar(50) NOT NULL,
-            `address` varchar(100) NOT NULL,
-            `phone` varchar(14) NOT NULL,
-            PRIMARY KEY (`user_id`)
+        CREATE TABLE IF NOT EXISTS users (
+            user_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            email VARCHAR(100) UNIQUE NOT NULL,
+            password VARCHAR(32) UNIQUE NOT NULL,
+            name VARCHAR(50) NOT NULL,
+            address VARCHAR(100) NOT NULL,
+            phone VARCHAR(14) NOT NULL
         );
 
-        CREATE TABLE IF NOT EXISTS `active_accounts` (
-            `account_number` int(3) NOT NULL AUTO_INCREMENT,
-            `user_id` int(11) NOT NULL,
-            `type_id` int(11) NOT NULL,
-            `balance` double NOT NULL,
-            PRIMARY KEY (`account_number`)
+        CREATE TABLE IF NOT EXISTS active_accounts (
+            account_number INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
+            user_id INTEGER NOT NULL,
+            type_id INTEGER NOT NULL,
+            balance DOUBLE NOT NULL
         );
 
-        );
     )";
 
     char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
     dbStatus = sqlite3_exec(dbHandler, createTables, 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
-    // sqlite3_exec executes a query, it takes the database, the query, an error message, and some other shit as arguments.
 
     if (dbStatus != 0) {
-        std::cout << "There was an error creating the table: " << errorMessage << std::endl;
-    }
-    else {
-        std::cout << "Tables created successfully (or already exist)." << std::endl;
+        std::cout << "An error occured while creating tables: " << errorMessage << std::endl;
+        exit(0);
     }
 
 
-    // // Here's how to add data from CPP files.
-    // const char *sqlInsert = "INSERT INTO person (name, age, gender, country) VALUES "
-    //                             "('Samuel Cook', 23, 'Male', 'Canada'),"
-    //                             "('Al Bowlly', 126, 'Male', 'Mozambique'),"
-    //                             "('Michael Myers', 72, 'Male', 'USA')";
+    // Adding sample users to the DB
+    const char *populate1 = "INSERT INTO users (email, password, name, address, phone) VALUES "
+                                "('sam@nscc.ca', 'sac00i2', 'Samuel Cook', '1 Infinite Loop, CA', '(902)688-1229'),"
+                                "('albowlly@nscc.ca', 'albowlly1897', 'Al Bowlly', 'Overlook Hotel, USA', '(244)531-5673'),"
+                                "('mikemyers@nscc.ca', 'halloweenFan', 'Michael Myers', '45 Lampkin Lane, Haddonfield', '(196)719-7831')";
 
-    // dbStatus = sqlite3_exec(dbHandler, sqlInsert, 0, 0, &errorMessage);
-    // if (dbStatus != 0) {
-    //     std::cout << "There was an error adding data to the tables: " << errorMessage << std::endl;
-    // }
-    // else {
-    //     std::cout << "Data inserted successfully!" << std::endl;
-    // }
+    // Add the account types to the DB
+    const char *populate2 = "INSERT INTO account_types (type) VALUES "
+                            "('Chequings'),"
+                            "('Savings'),"
+                            "('Fixed-Deposit')";
 
-    // // Here's how to update data
-    // const char *sqlUpdate = "UPDATE person SET country = 'CA' WHERE id = 1;";
+    // Add some active accounts to the DB
+    const char *populate3 = "INSERT INTO active_accounts (account_number, user_id, type_id, balance) VALUES "
+                            "('1', '1', '1', '10436.46'),"
+                            "('2', '1', '3', '2934.52'),"
+                            "('3', '2', '1', '635672.47'),"
+                            "('4', '2', '2', '7357.84'),"
+                            "('5', '3', '1', '167.34'),"
+                            "('6', '3', '2', '34.75'),"
+                            "('7', '3', '3', '1978.31')";
 
-    // dbStatus = sqlite3_exec(dbHandler, sqlUpdate, 0, 0, &errorMessage);
-    // if (dbStatus != 0) {
-    //     std::cout << "There was an error updating data in the tables: " << errorMessage << std::endl;
-    // }
-    // else {
-    //     std::cout << "Data updated successfully!" << std::endl;
-    // }
+    // Execute the populate queries
+    sqlite3_exec(dbHandler, populate1, 0, 0, &errorMessage);
+    sqlite3_exec(dbHandler, populate2, 0, 0, &errorMessage);
+    sqlite3_exec(dbHandler, populate3, 0, 0, &errorMessage);
 
-    // // Remember to make pointers null after they have been used, or free memory like the error messages when you are not using them.
+    system("cls");
+    do {
 
-    
+        std::string selection;
 
-    // // Here's how to select data for viewing.
-    // const char *sqlSelect = "SELECT * FROM person WHERE id > 1;";
+        std::cout << " ============ THE BANK ============" << std::endl;
+        std::cout << " 1 - Login" << std::endl;
+        std::cout << " 2 - Register" << std::endl;
+        std::cout << " 3 - Exit\n Please enter your selection: ";
+        getline(std::cin, selection);
 
-    // dbStatus = sqlite3_exec(dbHandler, sqlSelect, selectQuery, 0, &errorMessage); // The one parameter is filled with a function that handles displaying the results
-    // if (dbStatus != SQLITE_OK) {
-    //     std::cerr << "SQL Error: " << errorMessage << std::endl;
-    // }
-    // else {
-    //     std::cout << "Data retrieved successfully." << std::endl;
-    // }
+        if (selection == "1") {
+
+            std::string email;
+            std::string password;
+
+            system("cls");
+            std::cout << " ============= LOGIN ==============\n" << std::endl;
+            std::cout << " Please enter your email: ";
+            getline(std::cin, email);
+            std::cout << " Please enter your password: ";
+            getline(std::cin, password);
+
+            /*
+                login stuff
+            */
+
+            std::cout << " Press any key to continue... ";
+            system("pause >nul");
+            system("cls");
+            
+        }
+        else if (selection == "2") {
+
+            std::string email;
+            std::string password;
+            
+            system("cls");
+            std::cout << " ============ REGISTER ============\n" << std::endl;
+            std::cout << " Please enter your full name: ";
+            getline(std::cin, email);
+            std::cout << " Please enter your full address: ";
+            getline(std::cin, password);
+            std::cout << " Please enter your phone number: ";
+            getline(std::cin, email);
+            std::cout << " Please enter your email: ";
+            getline(std::cin, password);
+            std::cout << " Please enter your password: ";
+            getline(std::cin, password);
+
+            /*
+                register
+            */
+
+            std::cout << " Press any key to continue... ";
+            system("pause >nul");
+            system("cls");
+
+        }
+        else if (selection == "3") {
+            system("cls");
+            std::cout << " Exiting...\n" << std::endl;
+            break;
+        }
+        else {
+            system("cls");
+        }
+
+    } while (true);
 
 
     sqlite3_close(dbHandler);
@@ -116,9 +169,3 @@ int main() {
     return 0;
 }
 
-static int selectQuery(void *data, int numColumns, char **columnValues, char **columnNames) {
-    for (int i=0; i<numColumns; i++) {
-        std::cout << columnNames[i] << ": " << (columnNames[i] ? columnValues[i] : "NULL") << std::endl;
-    }
-    return 0;
-}
