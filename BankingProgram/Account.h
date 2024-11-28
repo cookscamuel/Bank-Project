@@ -23,7 +23,7 @@ public:
 
         sqlite3_stmt* stmt;
 
-        char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
+        const char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
 
         std::string sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
 

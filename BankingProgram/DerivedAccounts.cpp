@@ -46,10 +46,10 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
                 sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
                 sqlite3_stmt* stmt;
 
-                dbStatus = sqlite3_prepare_v2(dbHandler, sql.c_str(), -1, &stmt, &errorMessage);
+                dbStatus = sqlite3_prepare_v2(dbHandler, sql.c_str(), -1, &stmt, nullptr);
 
                 if (dbStatus != SQLITE_OK){
-                    std::cout << "There was an error preparing the statement: " << errorMessage << std::endl;
+                    std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
                     sqlite3_close(dbHandler);
                 }
 
@@ -107,10 +107,10 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
                 sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
                 sqlite3_stmt* stmt;
 
-                dbStatus = sqlite3_prepare_v2(dbHandler, sql.c_str(), -1, &stmt, &errorMessage);
+                dbStatus = sqlite3_prepare_v2(dbHandler, sql.c_str(), -1, &stmt, nullptr);
 
                 if (dbStatus != SQLITE_OK){
-                    std::cout << "There was an error preparing the statement: " << errorMessage << std::endl;
+                    std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
                     sqlite3_close(dbHandler);
                 }
 
@@ -168,10 +168,10 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
                 sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
                 sqlite3_stmt* stmt;
 
-                dbStatus = sqlite3_prepare_v2(dbHandler, sql.c_str(), -1, &stmt, &errorMessage);
+                dbStatus = sqlite3_prepare_v2(dbHandler, sql.c_str(), -1, &stmt, nullptr);
 
                 if (dbStatus != SQLITE_OK){
-                    std::cout << "There was an error preparing the statement: " << errorMessage << std::endl;
+                    std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
                     sqlite3_close(dbHandler);
                 }
 
