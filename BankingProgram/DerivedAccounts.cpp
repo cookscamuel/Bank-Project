@@ -151,7 +151,7 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
         if (amount > balance){
             std::cout << "Insufficient funds." << std::endl;
         }else{
-            std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(calculatePenalty(amount)) + " WHERE account_number = " + std::to_string(accountNumber);
+            std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount + calculatePenalty()) + " WHERE account_number = " + std::to_string(accountNumber);
             
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
            
@@ -365,3 +365,34 @@ void FixedDepositAccount::deposit(sqlite3 *dbHandler){
         }
     }while(amount > balance || amount != -1);
 }
+
+//Display Function Implementations
+void SavingsAccount::display(){
+    std::cout << "Account Number: " << accountNumber << std::endl;
+    std::cout << "Balance: " << balance << std::endl;
+    std::cout << "Account Type: Savings" << std::endl;
+    std::cout << "Interest Rate: 0.5%" << std::endl;
+}
+
+void CheckingAccount::display(){
+    std::cout << "Account Number: " << accountNumber << std::endl;
+    std::cout << "Balance: " << balance << std::endl;
+    std::cout << "Account Type: Checking" << std::endl;
+}
+
+void FixedDepositAccount::display(){
+    std::cout << "Account Number: " << accountNumber << std::endl;
+    std::cout << "Balance: " << balance << std::endl;
+    std::cout << "Account Type: Fixed Deposit" << std::endl;
+    std::cout << "Penalty: 7.5%" << std::endl;
+}
+
+//Specific Function Implementions
+void SavingsAccount::calculateInterest(){}
+
+void CheckingAccount::transferFunds(){}
+
+double FixedDepositAccount::calculatePenalty(){
+    return (balance * penalty);
+}
+
