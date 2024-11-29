@@ -10,12 +10,14 @@
 #include "Account.h"
 
 class SavingsAccount : public Account{
+    protected:
+        double interestRate;
     public:
         SavingsAccount(int accountNumber, sqlite3 *dbHandler): Account(accountNumber, dbHandler){};
         void withdraw(sqlite3 *dbHandler) override;
         void deposit(sqlite3 *dbHandler) override;
         void display() override;
-        void calculateInterest();
+        double calculateInterest();
 };
 
 class CheckingAccount : public Account{

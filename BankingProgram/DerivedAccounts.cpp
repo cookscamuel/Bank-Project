@@ -66,6 +66,7 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
         }
         
     }while(amount > balance || amount != -1);
+    display();
 }
 
 void CheckingAccount::withdraw(sqlite3 *dbHandler){
@@ -126,6 +127,7 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
         }
         
     }while(amount > balance || amount != -1);
+    display();
 }
 
 void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
@@ -186,6 +188,7 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
         }
         
     }while(amount > balance || amount != -1);
+    display();
 }
 
 //Deposit Function Implementations
@@ -246,6 +249,7 @@ void SavingsAccount::deposit(sqlite3 *dbHandler){
             std::cout << "Invalid amount." << std::endl;
         }
     }while(amount > balance || amount != -1);
+    display();
 }
 
 void CheckingAccount::deposit(sqlite3 *dbHandler){
@@ -305,6 +309,7 @@ void CheckingAccount::deposit(sqlite3 *dbHandler){
             std::cout << "Invalid amount." << std::endl;
         }
     }while(amount > balance || amount != -1);
+    display();
 }
 
 void FixedDepositAccount::deposit(sqlite3 *dbHandler){
@@ -364,6 +369,7 @@ void FixedDepositAccount::deposit(sqlite3 *dbHandler){
             std::cout << "Invalid amount." << std::endl;
         }
     }while(amount > balance || amount != -1);
+    display();
 }
 
 //Display Function Implementations
@@ -371,7 +377,7 @@ void SavingsAccount::display(){
     std::cout << "Account Number: " << accountNumber << std::endl;
     std::cout << "Balance: " << balance << std::endl;
     std::cout << "Account Type: Savings" << std::endl;
-    std::cout << "Interest Rate: 0.5%" << std::endl;
+    std::cout << "Interest Rate: " << calculateInterest() << std::endl;
 }
 
 void CheckingAccount::display(){
@@ -388,7 +394,7 @@ void FixedDepositAccount::display(){
 }
 
 //Specific Function Implementions
-void SavingsAccount::calculateInterest(){}
+double SavingsAccount::calculateInterest(){}
 
 void CheckingAccount::transferFunds(){}
 
