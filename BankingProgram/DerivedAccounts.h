@@ -36,6 +36,7 @@ class FixedDepositAccount : public Account{
         FixedDepositAccount(int accountNumber, sqlite3 *dbHandler): Account(accountNumber, dbHandler){};
         void withdraw(sqlite3 *dbHandler) override; //this one has penalties
         void deposit(sqlite3 *dbHandler) override;
+        double calculatePenalty(double amount);
         void display() override;
 };
 
