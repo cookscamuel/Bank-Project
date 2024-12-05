@@ -373,6 +373,7 @@ void FixedDepositAccount::deposit(sqlite3 *dbHandler){
 }
 
 //Display Function Implementations
+// add menus for doing stuff with the accounts
 void SavingsAccount::display(){
     std::cout << "Account Number: " << accountNumber << std::endl;
     std::cout << "Balance: " << balance << std::endl;
