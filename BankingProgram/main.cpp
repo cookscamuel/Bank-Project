@@ -93,9 +93,9 @@ int main() {
     sqlite3_exec(dbHandler, populate2, 0, 0, &errorMessage);
     sqlite3_exec(dbHandler, populate3, 0, 0, &errorMessage);
 
-
-    AccountHolder sam(1, "1 Infinite Loop, CA", "sam@nscc.ca", "sac00i2","(902)688-1229");
     system("cls");
+
+/////////////////////////////////////////////////////////// MAIN MENU STARTS HERE //////////////////////////////////////////////////////////////////////
     do {
 
         std::string selection;
@@ -112,7 +112,7 @@ int main() {
             std::string password;
 
             system("cls");
-            std::cout << " ============= LOGIN ==============\n" << std::endl;
+            std::cout << " ============= LOGIN ==============" << std::endl;
             std::cout << " Please enter your email: ";
             getline(std::cin, email);
             std::cout << " Please enter your password: ";
@@ -122,8 +122,50 @@ int main() {
                 login stuff
             */
 
-            std::cout << " Press any key to continue... ";
-            system("pause >nul");
+            // Prepare a query to check for matches of the email and password.
+            std::string sqlSelect = "SELECT COUNT(*) FROM users WHERE email = '" + email + "' AND password = '" + password + "';";
+            sqlite3_stmt* stmt;
+
+            dbStatus = sqlite3_prepare_v2(dbHandler, sqlSelect.c_str(), -1, &stmt, nullptr);
+            if (dbStatus != SQLITE_OK) {
+                // ERROR
+            }
+
+            int count = 0; // Variable used to count how many rows were returned.
+            dbStatus = sqlite3_step(stmt); // Step through the statement.
+            if (dbStatus == SQLITE_ROW) {
+                count = sqlite3_column_int(stmt, 0); // Set the count to the number of returned rows.
+            }
+            if (count == 0 || count > 1) { // If no records are found or, for some reason, duplicate records are found.
+                std::cout << "\n We have no record of you at this bank.\n Please consider registering an account with us.\n" << std::endl;
+                std::cout << " Press any key to continue... ";
+                system("pause >nul");
+            }
+            else {
+                do {
+                    system("cls");
+                    selection = "";
+                    std::cout << " ============ MY ACCOUNT ==========" << std::endl;
+                    std::cout << " 1 - View My Accounts" << std::endl;
+                    std::cout << " 2 - Open New Account" << std::endl;
+                    std::cout << " 3 - Logout\n Please enter your selection: ";
+                    getline(std::cin, selection);
+
+                    if (selection == "1") {
+
+                    }
+                    else if (selection == "2") {
+
+                    }
+                    else if (selection == "3") {
+                        break;
+                    }
+                    else {
+                        system("cls");
+                    }
+
+                } while (true);
+            }
             system("cls");
             
         }
@@ -133,7 +175,7 @@ int main() {
             std::string password;
             
             system("cls");
-            std::cout << " ============ REGISTER ============\n" << std::endl;
+            std::cout << " ============ REGISTER ============" << std::endl;
             std::cout << " Please enter your full name: ";
             getline(std::cin, email);
             std::cout << " Please enter your full address: ";
@@ -170,4 +212,3 @@ int main() {
 
     return 0;
 }
-
