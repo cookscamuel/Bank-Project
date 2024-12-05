@@ -28,7 +28,7 @@ class CheckingAccount : public Account{
         void withdraw(sqlite3 *dbHandler) override;
         void deposit(sqlite3 *dbHandler) override;
         void display() override;
-        void transferFunds();
+        void transferFunds(sqlite3 *dbHandler);
 };
 
 class FixedDepositAccount : public Account{
