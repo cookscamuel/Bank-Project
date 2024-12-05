@@ -395,7 +395,9 @@ void FixedDepositAccount::display(){
 }
 
 //Specific Function Implementions
-double SavingsAccount::calculateInterest(){}
+double SavingsAccount::calculateInterest(){
+    return 0.0;
+}
 
 void CheckingAccount::transferFunds(){}
 

@@ -93,6 +93,8 @@ int main() {
     sqlite3_exec(dbHandler, populate2, 0, 0, &errorMessage);
     sqlite3_exec(dbHandler, populate3, 0, 0, &errorMessage);
 
+
+    AccountHolder sam(1, "1 Infinite Loop, CA", "sam@nscc.ca", "sac00i2","(902)688-1229");
     system("cls");
     do {
 

@@ -17,7 +17,7 @@ private:
     std::string address;
     std::string email;
     std::string password;
-    int phone;
+    std::string phone;
 
 
 public:
@@ -26,7 +26,7 @@ public:
         std::string address,
         std::string email,
         std::string password,
-        int phone
+        std::string phone
     ): name(name), address(address), email(email), password(password), phone(phone){};
 
     int getId() const { return id; }
