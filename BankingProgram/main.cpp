@@ -317,13 +317,51 @@ int main() {
                             selection = "";
                             std::cout << " ========= MANAGE ACCOUNT =========" << std::endl;
                             std::cout << " Which account would you like to manage?" << std::endl;
-                            std::cout << " *ACCOUNTS*" << std::endl;
+
+                            std::string sqlSelect = "SELECT account_number, type_id, balance FROM active_accounts WHERE user_id = '" + std::to_string(user->id) + "';";
+                            sqlite3_stmt* stmt;
+
+                            /////////////////////////////////////////// HELPED BY CHATGPT ///////////////////////////////////////////////////
+                            dbStatus = sqlite3_prepare_v2(dbHandler, sqlSelect.c_str(), -1, &stmt, nullptr);
+                            if (dbStatus != SQLITE_OK) {
+                                std::cout << " There was an error processing your request." << std::endl;
+                            }
+
+                            std::string accType;
+                            // Loop through the results and display them
+                            while ((dbStatus = sqlite3_step(stmt)) == SQLITE_ROW) {
+                                // Extract column values and display them
+                                int account_number = sqlite3_column_int(stmt, 0);
+                                int type_id = sqlite3_column_int(stmt, 1);
+                                double balance = sqlite3_column_double(stmt, 2);
+
+                                switch (type_id) {
+                                    case 1:
+                                        accType = "Chequings";
+                                        break;
+                                    case 2:
+                                        accType = "Savings";
+                                        break;
+
+                                    case 3:
+                                        accType = "Fixed-Deposit";
+                                        break;
+                                }
+                                std::cout << "\n =========== ACCOUNT #" << account_number << " ===========" << std::endl;
+                                std::cout << " " << accType << ", Balance: $" << balance << std::endl;
+                            }
+
+                            if (dbStatus != SQLITE_DONE) {
+                                std::cout << " An error occurred while fetching your accounts." << std::endl;
+                            }
+                            sqlite3_finalize(stmt);
                             std::cout << "\n Please enter your selection, or\n enter 0 to return to My Account: ";
                             getline(std::cin, selection);
 
                             if (selection == "0") {
                                 break;
                             }
+
 
                         } while (true);
                         system("cls");
