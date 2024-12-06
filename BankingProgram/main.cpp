@@ -286,9 +286,7 @@ int main() {
             std::cout << " Please enter your password: ";
             getline(std::cin, password);
 
-            /*
-                register
-            */
+            // TODO: add some more error checking to ensure data entered is valid.
 
             // Query to insert new user into the database.
             std::string registerQuery = "INSERT INTO users (name, address, phone, email, password) VALUES ('" + name +"', '" + address + "', '" + number + "', '" + email + "', '" + password + "')";
@@ -298,6 +296,9 @@ int main() {
 
             if (dbStatus != SQLITE_OK) {
                 std::cout << " There was an error creating your account.\n This email may already be in use." << std::endl;
+            }
+            else {
+                std::cout << " Account created!" << std::endl;
             }
 
             std::cout << " Press any key to continue... ";
