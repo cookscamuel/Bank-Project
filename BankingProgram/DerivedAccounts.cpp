@@ -7,20 +7,21 @@
 #include "DerivedAccounts.h"
 
 
-//Withdraw function implementations
+//Withdraw function implementations 
 void SavingsAccount::withdraw(sqlite3 *dbHandler){
+    //amount to be withdrawn from the account
     double amount;
-    
 
-    do{
-        do{ 
-                std::cout << "Enter the amount you would like to withdraw: ";
+    do{//error checking loop for when the user puts an amount higher that the balance and allows them to exit when a negative number is put in
+        do{ //error checking loop
+                std::cout << "Enter the amount you would like to withdraw, or -1 to exit: ";
                 std::cin >> amount;
 
+                //checks if it failed ie checks for alphabetical/special characters here
                 if (std::cin.fail()) {
-                    std::cin.clear();
+                    std::cin.clear(); // clears the error flag on cin so that it can be used again
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear out whatever is in the buffer.
-                    std::cout << "\n ERROR: Invalid entry! Please enter an integer value. \n" << std::endl;
+                    std::cout << "\n ERROR: Invalid entry! Please enter an integer value. \n" << std::endl; // gives the user an error message and prompts them to enter a valid integer
                 }else {
                     break;
                 }
@@ -28,22 +29,25 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
 
         
 
-        if (amount > balance){
+        if (amount > balance){ //error message for when the user tries to withdraw more than they have
             std::cout << "Insufficient funds." << std::endl;
         }else{
+            //updates balance value in database
             std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
             
-            
+
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
            
             int dbStatus = sqlite3_open("bank_system.db", &dbHandler);
 
             dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
+            //check for succesfull updating
             if (dbStatus != SQLITE_OK) {
                 std::cout << "There was an error udating balance: " << errorMessage << std::endl;
             }
             else {
+                // updates the balance member variable with the updated balance from the database
                 sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
                 sqlite3_stmt* stmt;
 
@@ -65,17 +69,17 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
             }
         }
         
-    }while(amount > balance || amount != -1);
-    display();
+    }while(amount > balance || amount < 0);
+    display();// calls the display function
 }
 
+//functionally exactly the same as the savings account withdraw function
 void CheckingAccount::withdraw(sqlite3 *dbHandler){
     double amount;
     
-
-    do{
+    do{//error checking for the amount to be withdrawn but checks for overdraft instead of total balance
         do{ 
-                std::cout << "Enter the amount you would like to withdraw: ";
+                std::cout << "Enter the amount you would like to withdraw, or -1 to exit: ";
                 std::cin >> amount;
 
                 if (std::cin.fail()) {
@@ -88,9 +92,9 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
         }while(true);
 
         
-
-        if (amount > balance){
-            std::cout << "Insufficient funds." << std::endl;
+        // rather than checking for total balance, we check for overdraft
+        if (balance-amount < 500){
+            std::cout << "Funds would go into overdraft, Enter a valid amount." << std::endl;
         }else{
             std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
             
@@ -126,17 +130,18 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
             }
         }
         
-    }while(amount > balance || amount != -1);
-    display();
+    }while(balance-amount < 500 || amount != -1);
+    display(); 
 }
 
+//functionally the same as the savings account withdraw function but with a penalty applied onto the balance when withdrawing
 void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
     double amount;
     
 
     do{
-        do{ 
-                std::cout << "Enter the amount you would like to withdraw, a fee of 7.5% of your balance will be charged: ";
+        do{ //inform the user of the fee that will be charged
+                std::cout << "Enter the amount you would like to withdraw, a fee of 7.5% of your balance will be charged, or -1 to exit: ";
                 std::cin >> amount;
 
                 if (std::cin.fail()) {
@@ -152,7 +157,7 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
 
         if (amount > balance){
             std::cout << "Insufficient funds." << std::endl;
-        }else{
+        }else{                                                                  // the total amount the will be subtracted from the balance with amount and the penalty
             std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount + calculatePenalty()) + " WHERE account_number = " + std::to_string(accountNumber);
             
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
@@ -192,11 +197,13 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
 }
 
 //Deposit Function Implementations
+//functionally similar to the withdraw functions but adds to the balance instead of subtracting
+//the deposit functions are all the same 
 void SavingsAccount::deposit(sqlite3 *dbHandler){
     double amount;
-    do{
-        do{ 
-                std::cout << "Enter the amount you would like to deposit: ";
+    do{ //error checking loop for invalid amounts
+        do{ //error checking loop same as withdraw functions 
+                std::cout << "Enter the amount you would like to deposit, or -1 to exit: ";
                 std::cin >> amount;
                  if (std::cin.fail()) {
                     std::cin.clear();
@@ -207,7 +214,8 @@ void SavingsAccount::deposit(sqlite3 *dbHandler){
                 }
         }while(true);
 
-        if (amount > 0){
+        if (amount > 0){ 
+            // updating and increasing the balance
             std::string sql = "UPDATE active_accounts SET balance = balance + " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
             
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
@@ -216,6 +224,7 @@ void SavingsAccount::deposit(sqlite3 *dbHandler){
 
             dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
+            // updating balance member variable
             if (dbStatus == SQLITE_OK){
                 std::cout << "Deposit successful." << std::endl;
 
@@ -248,7 +257,7 @@ void SavingsAccount::deposit(sqlite3 *dbHandler){
         }else{
             std::cout << "Invalid amount." << std::endl;
         }
-    }while(amount > balance || amount != -1);
+    }while(amount != -1);
     display();
 }
 
@@ -256,7 +265,7 @@ void CheckingAccount::deposit(sqlite3 *dbHandler){
     double amount;
     do{
         do{ 
-                std::cout << "Enter the amount you would like to deposit: ";
+                std::cout << "Enter the amount you would like to deposit, or -1 to exit: ";
                 std::cin >> amount;
                  if (std::cin.fail()) {
                     std::cin.clear();
@@ -308,7 +317,7 @@ void CheckingAccount::deposit(sqlite3 *dbHandler){
         }else{
             std::cout << "Invalid amount." << std::endl;
         }
-    }while(amount > balance || amount != -1);
+    }while(amount != -1);
     display();
 }
 
@@ -316,7 +325,7 @@ void FixedDepositAccount::deposit(sqlite3 *dbHandler){
     double amount;
     do{
         do{ 
-                std::cout << "Enter the amount you would like to deposit: ";
+                std::cout << "Enter the amount you would like to deposit, or -1 to exit: ";
                 std::cin >> amount;
                  if (std::cin.fail()) {
                     std::cin.clear();
@@ -368,26 +377,26 @@ void FixedDepositAccount::deposit(sqlite3 *dbHandler){
         }else{
             std::cout << "Invalid amount." << std::endl;
         }
-    }while(amount > balance || amount != -1);
+    }while(amount != -1);
     display();
 }
 
 //Display Function Implementations
 // add menus for doing stuff with the accounts
-void SavingsAccount::display(){
+void SavingsAccount::display(){ //displays the account number, balance, account type, and the interest that would be earned
     std::cout << "Account Number: " << accountNumber << std::endl;
     std::cout << "Balance: " << balance << std::endl;
     std::cout << "Account Type: Savings" << std::endl;
     std::cout << "Interest Earnings: " << calculateInterest() << "with a rate of " << interestRate*100 << "%" << std::endl;
 }
 
-void CheckingAccount::display(){
+void CheckingAccount::display(){ //displays the account number, balance, and account type
     std::cout << "Account Number: " << accountNumber << std::endl;
     std::cout << "Balance: " << balance << std::endl;
     std::cout << "Account Type: Checking" << std::endl;
 }
 
-void FixedDepositAccount::display(){
+void FixedDepositAccount::display(){ //displays the account number, balance, account type, and the penalty that would be charged
     std::cout << "Account Number: " << accountNumber << std::endl;
     std::cout << "Balance: " << balance << std::endl;
     std::cout << "Account Type: Fixed Deposit" << std::endl;
@@ -395,7 +404,7 @@ void FixedDepositAccount::display(){
 }
 
 //Specific Function Implementions
-double SavingsAccount::calculateInterest(){
+double SavingsAccount::calculateInterest(){ //calculates the interest-rate based on the balance and returns the interest that would be earned
     if (balance < 1000){
         interestRate = 0.01;
     }else if (balance < 5000){
@@ -409,15 +418,41 @@ double SavingsAccount::calculateInterest(){
     
 }
 
-void CheckingAccount::transferFunds(sqlite3 *dbHandler){
+void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to transfer funds from the checking account to another account
     double amount;
     int accountNumber;
-    std::cout << "Enter the account number you would like to transfer funds to: ";
-    std::cin >> accountNumber;
-    std::cout << "Enter the amount you would like to transfer: ";
-    std::cin >> amount;
 
-    if (amount > balance){
+    
+    do{ 
+        std::cout << "Enter the account number you would like to transfer funds to: ";
+        std::cin >> accountNumber;
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear out whatever is in the buffer.
+            std::cout << "\n ERROR: Invalid entry! Please enter an double value. \n" << std::endl;
+        }else {
+            break;
+        }
+    }while(true);
+
+    
+    
+    
+    do{ 
+        std::cout << "Enter the amount you would like to transfer: ";
+        std::cin >> amount;
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear out whatever is in the buffer.
+            std::cout << "\n ERROR: Invalid entry! Please enter an double value. \n" << std::endl;
+        }else {
+            break;
+        }
+    }while(true);
+
+    
+
+    if (amount > balance || amount < 0){
         std::cout << "Insufficient funds." << std::endl;
     }else{
         std::string sql = "UPDATE active_accounts SET balance = balance + " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
@@ -455,6 +490,7 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){
     display();
 }
 
+//returns the penalty that will be charged
 double FixedDepositAccount::calculatePenalty(){
     return (balance * penalty);
 }

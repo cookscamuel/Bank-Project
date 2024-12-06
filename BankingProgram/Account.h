@@ -13,34 +13,47 @@
 
 class Account
 {
+    //protected so that the derived classes can access the members
 protected:
+    // will hold the balance of the account and the account number
     double balance;
     int accountNumber;
 public:
+
+    // Constructor for the Account class that grabs the balance from the database
     Account(int accountNumber,sqlite3 *dbHelper): accountNumber(accountNumber){       
         
         int dbStatus = sqlite3_open("bank_system.db", &dbHelper);
 
-        sqlite3_stmt* stmt;
+        sqlite3_stmt* stmt; // variable that holds the sql statement results
 
         const char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
 
+        //grabbing balance from the database based on the passed in account number
         std::string sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
 
+        // checking if the database opened correctly
         if (dbStatus != SQLITE_OK) {
             std::cout << "There was an error opening the database:" << sqlite3_errmsg(dbHelper) << std::endl;
         }
 
+        //preparing the query
         dbStatus = sqlite3_prepare_v2(dbHelper, sql.c_str(), -1, &stmt, &errorMessage);
 
+        //checking if the query was prepared correctly
         if (dbStatus != SQLITE_OK) {
             std::cout << "There was an error preparing the statement: " << errorMessage << std::endl;
         }
 
+        //executing the query and grabbing the balance which would be in the first column
         if (sqlite3_step(stmt) == SQLITE_ROW) {
             balance = sqlite3_column_double(stmt, 0);
         }else{
             std::cout << "Account not found." << std::endl;
+            //closes the program if it fails to find the account
+            //this shouldn't happen because the accounts have 
+            //already been found in main.cpp when looking for all
+            //the accounts associated with the user
             exit(1);
         }
 
@@ -50,13 +63,10 @@ public:
     };
     ~Account() = default;
 
-    void virtual withdraw(sqlite3 *dbHandler);
-    void virtual deposit(sqlite3 *dbHandler);
-    void virtual display();
-
-    static double grabBalance(void *data, int numColumns, char **columnValues, char **columnNames){
-        return std::stod(columnValues[0]);
-    };
+    // virtual functions that will be overridden by the derived classes but will do very similar things
+    void virtual withdraw(sqlite3 *dbHandler); // subtracts from the balance and updates the database and then updates the variable
+    void virtual deposit(sqlite3 *dbHandler);  // adds to the balance and updates the database and then updates the variable
+    void virtual display(); //displays the account number and the balance
 };
 
 #endif
