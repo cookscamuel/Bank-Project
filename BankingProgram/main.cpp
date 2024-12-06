@@ -22,6 +22,7 @@ int main() {
 
     sqlite3 *dbHandler; // Pointer variable used to carry out database interactions.
     int dbStatus; // Variable used to track the status of recently executed queries. Successful connections are 0s.
+    AccountHolder* user = new AccountHolder();
 
     dbStatus = sqlite3_open("bank_system.db", &dbHandler); // Attempt to open a database called bank_system.db. If it doesn't exist, make it.
 
@@ -42,7 +43,7 @@ int main() {
         CREATE TABLE IF NOT EXISTS users (
             user_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
             email VARCHAR(100) UNIQUE NOT NULL,
-            password VARCHAR(32) UNIQUE NOT NULL,
+            password VARCHAR(32) NOT NULL,
             name VARCHAR(50) NOT NULL,
             address VARCHAR(100) NOT NULL,
             phone VARCHAR(14) NOT NULL
@@ -118,9 +119,6 @@ int main() {
             std::cout << " Please enter your password: ";
             getline(std::cin, password);
 
-            /*
-                login stuff
-            */
 
             // Prepare a query to check for matches of the email and password.
             std::string sqlSelect = "SELECT COUNT(*) FROM users WHERE email = '" + email + "' AND password = '" + password + "';";
@@ -128,11 +126,11 @@ int main() {
 
             dbStatus = sqlite3_prepare_v2(dbHandler, sqlSelect.c_str(), -1, &stmt, nullptr);
             if (dbStatus != SQLITE_OK) {
-                // ERROR
+                std::cout << " There was an error signing you in." << std::endl;
             }
 
             int count = 0; // Variable used to count how many rows were returned.
-            dbStatus = sqlite3_step(stmt); // Step through the statement.
+            dbStatus = sqlite3_step(stmt); // Step through every row.
             if (dbStatus == SQLITE_ROW) {
                 count = sqlite3_column_int(stmt, 0); // Set the count to the number of returned rows.
             }
@@ -142,22 +140,120 @@ int main() {
                 system("pause >nul");
             }
             else {
+
+                std::string sqlSelect = "SELECT user_id, email, password, name, address, phone FROM users WHERE email = '" + email + "' AND password = '" + password + "';";
+                sqlite3_stmt* stmt;
+
+
+                dbStatus = sqlite3_prepare_v2(dbHandler, sqlSelect.c_str(), -1, &stmt, nullptr);
+                if (dbStatus != SQLITE_OK) {
+                    std::cout << " An error occurred while fetching your information." << std::endl;
+                }
+
+                dbStatus = sqlite3_step(stmt); // Step through every row.
+                if (dbStatus == SQLITE_ROW) {
+                    int user_id = sqlite3_column_int(stmt, 0);
+                    const unsigned char* emailResult = sqlite3_column_text(stmt, 1);
+                    const unsigned char* passwordResult = sqlite3_column_text(stmt, 2);
+                    const unsigned char* name = sqlite3_column_text(stmt, 3);
+                    const unsigned char* address = sqlite3_column_text(stmt, 4);
+                    const unsigned char* phone = sqlite3_column_text(stmt, 5);
+
+                    // Cast the query results into strings for the constructor to use.
+                    std::string accEmail(reinterpret_cast<const char*>(emailResult));
+                    std::string accPass(reinterpret_cast<const char*>(passwordResult));
+                    std::string accName(reinterpret_cast<const char*>(name));
+                    std::string accAddr(reinterpret_cast<const char*>(address));
+                    std::string accPhone(reinterpret_cast<const char*>(phone));
+                    
+                    user->id = user_id;
+                    user->email = accEmail;
+                    user->password = accPass;
+                    user->name = accName;
+                    user->address = accAddr;
+                    user->phone = accPhone;
+
+
+                }
+
+                sqlite3_finalize(stmt);
+                system("cls");
                 do {
-                    system("cls");
                     selection = "";
                     std::cout << " ============ MY ACCOUNT ==========" << std::endl;
+                    std::cout << " Hello, " << user->name << "." << std::endl;
                     std::cout << " 1 - View My Accounts" << std::endl;
                     std::cout << " 2 - Open New Account" << std::endl;
-                    std::cout << " 3 - Logout\n Please enter your selection: ";
+                    std::cout << " 3 - Manage Account" << std::endl;
+                    std::cout << " 4 - Logout\n Please enter your selection: ";
                     getline(std::cin, selection);
 
                     if (selection == "1") {
+                        system("cls");
+                        std::cout << " ========= ACTIVE ACCOUNTS ========" << std::endl;
 
+                        std::string sqlSelect = "SELECT account_number, type_id, balance FROM active_accounts WHERE user_id = '" + std::to_string(user->id) + "';";
+                        sqlite3_stmt* stmt;
+
+                        /////////////////////////////////////////// HELPED BY CHATGPT ///////////////////////////////////////////////////
+                        dbStatus = sqlite3_prepare_v2(dbHandler, sqlSelect.c_str(), -1, &stmt, nullptr);
+                        if (dbStatus != SQLITE_OK) {
+                            std::cout << " There was an error processing your request." << std::endl;
+                        }
+
+                            std::string accType;
+                            // Loop through the results and display them
+                            while ((dbStatus = sqlite3_step(stmt)) == SQLITE_ROW) {
+                                // Extract column values and display them
+                                int account_number = sqlite3_column_int(stmt, 0);
+                                int type_id = sqlite3_column_int(stmt, 1);
+                                double balance = sqlite3_column_double(stmt, 2);
+
+                                switch (type_id) {
+                                    case 1:
+                                        accType = "Chequings";
+                                        break;
+                                    case 2:
+                                        accType = "Savings";
+                                        break;
+
+                                    case 3:
+                                        accType = "Fixed-Deposit";
+                                        break;
+                                }
+                                std::cout << "\n =========== ACCOUNT #" << account_number << " ===========" << std::endl;
+                                std::cout << " " << accType << ", Balance: $" << balance << std::endl;
+                            }
+
+                            if (dbStatus != SQLITE_DONE) {
+                                std::cout << " An error occurred while fetching your accounts." << std::endl;
+                            }
+                            sqlite3_finalize(stmt);
+
+                        std::cout << "\n Press any key to return to the previous screen. ";
+                        system("pause >nul");
+                        system("cls");
                     }
                     else if (selection == "2") {
+                        // ADD ACCOUNT
+                        system("cls");
+                        do {
+                            // MENU HERE
+                        } while (true);
+                        system("cls");
 
                     }
                     else if (selection == "3") {
+                        // MANAGE ACCOUNT
+                        system("cls");
+                        do {
+                            // MENU HERE
+                        } while (true);
+                        system("cls");
+
+                    }
+                    else if (selection == "4") {
+                        // LOGOUT
                         break;
                     }
                     else {
@@ -171,25 +267,38 @@ int main() {
         }
         else if (selection == "2") {
 
+            std::string name;
+            std::string address;
+            std::string number;
             std::string email;
             std::string password;
             
             system("cls");
             std::cout << " ============ REGISTER ============" << std::endl;
             std::cout << " Please enter your full name: ";
-            getline(std::cin, email);
+            getline(std::cin, name);
             std::cout << " Please enter your full address: ";
-            getline(std::cin, password);
+            getline(std::cin, address);
             std::cout << " Please enter your phone number: ";
-            getline(std::cin, email);
+            getline(std::cin, number);
             std::cout << " Please enter your email: ";
-            getline(std::cin, password);
+            getline(std::cin, email);
             std::cout << " Please enter your password: ";
             getline(std::cin, password);
 
             /*
                 register
             */
+
+            // Query to insert new user into the database.
+            std::string registerQuery = "INSERT INTO users (name, address, phone, email, password) VALUES ('" + name +"', '" + address + "', '" + number + "', '" + email + "', '" + password + "')";
+
+            // Execute insert query.
+            dbStatus = sqlite3_exec(dbHandler, registerQuery.c_str(), 0, 0, &errorMessage);
+
+            if (dbStatus != SQLITE_OK) {
+                std::cout << " There was an error creating your account.\n This email may already be in use." << std::endl;
+            }
 
             std::cout << " Press any key to continue... ";
             system("pause >nul");

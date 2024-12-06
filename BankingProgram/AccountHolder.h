@@ -11,25 +11,14 @@
 
 class AccountHolder
 {
-private:
+public:
+
     int id;
     std::string name;
     std::string address;
     std::string email;
     std::string password;
     std::string phone;
-
-
-public:
-    AccountHolder(
-        std::string name,
-        std::string address,
-        std::string email,
-        std::string password,
-        std::string phone
-    ): name(name), address(address), email(email), password(password), phone(phone){};
-
-    int getId() const { return id; }
     
     ~AccountHolder() = default;
 };
