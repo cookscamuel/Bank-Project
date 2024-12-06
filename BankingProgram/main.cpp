@@ -94,9 +94,9 @@ int main() {
     sqlite3_exec(dbHandler, populate2, 0, 0, &errorMessage);
     sqlite3_exec(dbHandler, populate3, 0, 0, &errorMessage);
 
-    system("cls");
 
 /////////////////////////////////////////////////////////// MAIN MENU STARTS HERE //////////////////////////////////////////////////////////////////////
+    system("cls");
     do {
 
         std::string selection;
@@ -136,7 +136,7 @@ int main() {
             }
             if (count == 0 || count > 1) { // If no records are found or, for some reason, duplicate records are found.
                 std::cout << "\n We have no record of you at this bank.\n Please consider registering an account with us.\n" << std::endl;
-                std::cout << " Press any key to continue... ";
+                std::cout << " Press any key to continue...";
                 system("pause >nul");
             }
             else {
@@ -173,7 +173,6 @@ int main() {
                     user->address = accAddr;
                     user->phone = accPhone;
 
-
                 }
 
                 sqlite3_finalize(stmt);
@@ -190,7 +189,7 @@ int main() {
 
                     if (selection == "1") {
                         system("cls");
-                        std::cout << " ========= ACTIVE ACCOUNTS ========" << std::endl;
+                        std::cout << " Showing Accounts for " << user->name << "..." << std::endl;
 
                         std::string sqlSelect = "SELECT account_number, type_id, balance FROM active_accounts WHERE user_id = '" + std::to_string(user->id) + "';";
                         sqlite3_stmt* stmt;
@@ -235,28 +234,105 @@ int main() {
                         system("cls");
                     }
                     else if (selection == "2") {
-                        // ADD ACCOUNT
                         system("cls");
                         do {
-                            // MENU HERE
+                            selection = "";
+                            std::cout << " ========= CREATE ACCOUNT =========" << std::endl;
+                            std::cout << " 1 - New Chequing Account" << std::endl;
+                            std::cout << " 2 - New Savings Account" << std::endl;
+                            std::cout << " 3 - New Fixed-Deposit Account" << std::endl;
+                            std::cout << " 4 - Back\n Please enter your selection: ";
+                            getline(std::cin, selection);
+
+                            if (selection == "1") {
+
+                                std::string checkingQuery = "INSERT INTO active_accounts (user_id, type_id, balance) VALUES ('" + std::to_string(user->id) + "', 1, 0.00)";
+
+                                dbStatus = sqlite3_exec(dbHandler, checkingQuery.c_str(), 0, 0, &errorMessage);
+
+                                if (dbStatus != SQLITE_OK) {
+                                    std::cout << " There was an error creating your account.\n Please try again." << errorMessage << std::endl;
+                                }
+                                else {
+                                    std::cout << " New Chequing Account Opened!" << std::endl;
+                                }
+
+                                std::cout << " Press any key to continue...";
+                                system("pause >nul");
+                                
+                                break;
+                                
+                            }
+                            else if (selection == "2") {
+
+                                std::string savingsQuery = "INSERT INTO active_accounts (user_id, type_id, balance) VALUES ('" + std::to_string(user->id) + "', 2, 0.00)";
+
+                                dbStatus = sqlite3_exec(dbHandler, savingsQuery.c_str(), 0, 0, &errorMessage);
+
+                                if (dbStatus != SQLITE_OK) {
+                                    std::cout << " There was an error creating your account.\n Please try again." << errorMessage << std::endl;
+                                }
+                                else {
+                                    std::cout << " New Savings Account Opened!" << std::endl;
+                                }
+
+                                std::cout << " Press any key to continue...";
+                                system("pause >nul");
+
+                                break;
+                            }
+                            else if (selection == "3") {
+
+                                // MAKE NEW FIXED-DEPOSIT
+                                std::string fixedQuery = "INSERT INTO active_accounts (user_id, type_id, balance) VALUES ('" + std::to_string(user->id) + "', 3, 0.00)";
+
+                                dbStatus = sqlite3_exec(dbHandler, fixedQuery.c_str(), 0, 0, &errorMessage);
+
+                                if (dbStatus != SQLITE_OK) {
+                                    std::cout << " There was an error creating your account.\n Please try again." << errorMessage << std::endl;
+                                }
+                                else {
+                                    std::cout << " New Fixed-Deposit Account Opened!" << std::endl;
+                                }
+
+                                std::cout << " Press any key to continue...";
+                                system("pause >nul");
+
+                                break;
+                            }
+                            else if (selection == "4") { // Return to My Account.
+                                break;
+                            }
+                            else {
+                                system("cls");
+                            }
                         } while (true);
                         system("cls");
 
                     }
-                    else if (selection == "3") {
-                        // MANAGE ACCOUNT
-                        system("cls");
+///////////////////////////////////////////////////////////////// MANAGE ACCOUNT //////////////////////////////////////////////////////////
+                    else if (selection == "3") { // MANAGE ACCOUNT
                         do {
-                            // MENU HERE
+                            system("cls");
+                            selection = "";
+                            std::cout << " ========= MANAGE ACCOUNT =========" << std::endl;
+                            std::cout << " Which account would you like to manage?" << std::endl;
+                            std::cout << " *ACCOUNTS*" << std::endl;
+                            std::cout << "\n Please enter your selection, or\n enter 0 to return to My Account: ";
+                            getline(std::cin, selection);
+
+                            if (selection == "0") {
+                                break;
+                            }
+
                         } while (true);
                         system("cls");
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     }
-                    else if (selection == "4") {
-                        // LOGOUT
+                    else if (selection == "4") { // Logout, return to main menu.
                         break;
                     }
-                    else {
+                    else { // Invalid input.
                         system("cls");
                     }
 
@@ -301,7 +377,7 @@ int main() {
                 std::cout << " Account created!" << std::endl;
             }
 
-            std::cout << " Press any key to continue... ";
+            std::cout << " Press any key to continue...";
             system("pause >nul");
             system("cls");
 
@@ -319,6 +395,7 @@ int main() {
 
 
     sqlite3_close(dbHandler);
+    delete user;
 
     return 0;
 }
