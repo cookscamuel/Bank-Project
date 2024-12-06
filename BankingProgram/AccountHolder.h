@@ -11,8 +11,9 @@
 
 class AccountHolder
 {
+    // They will be assigned manualy in the main.cpp file.
 public:
-
+    // Member variables to hold the user's information.
     int id;
     std::string name;
     std::string address;
