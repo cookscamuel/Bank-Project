@@ -450,30 +450,37 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
         char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
 
         int dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
-        dbStatus = sqlite3_exec(dbHandler, sql2.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
-
+        
         if (dbStatus != SQLITE_OK) {
             std::cout << "There was an error udating balance: " << errorMessage << std::endl;
-        }
-        else {
-            sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
-            sqlite3_stmt* stmt;
+        }else{
+            dbStatus = sqlite3_exec(dbHandler, sql2.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
-            dbStatus = sqlite3_prepare_v2(dbHandler, sql.c_str(), -1, &stmt, nullptr);
-
-            if (dbStatus != SQLITE_OK){
-                std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                exit(1);
+            if (dbStatus != SQLITE_OK) {
+                std::cout << "There was an error udating balance: " << errorMessage << std::endl;
             }
+            else {
+                sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
+                sqlite3_stmt* stmt;
 
-            dbStatus = sqlite3_step(stmt);
+                dbStatus = sqlite3_prepare_v2(dbHandler, sql.c_str(), -1, &stmt, nullptr);
 
-            if(dbStatus == SQLITE_ROW){
-                balance = sqlite3_column_double(stmt, 0);
-            }else{
-                std::cout << "No Data Found" << std::endl;
+                if (dbStatus != SQLITE_OK){
+                    std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
+                    exit(1);
+                }
+
+                dbStatus = sqlite3_step(stmt);
+
+                if(dbStatus == SQLITE_ROW){
+                    balance = sqlite3_column_double(stmt, 0);
+                }else{
+                    std::cout << "No Data Found" << std::endl;
+                }
             }
         }
+        
+        
     }
     display();
 }
