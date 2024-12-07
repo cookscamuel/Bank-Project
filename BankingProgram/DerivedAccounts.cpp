@@ -91,7 +91,7 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
 
         
         // rather than checking for total balance, we check for overdraft
-        if (balance-amount < 500){
+        if (balance-amount < balance*0.1){
             std::cout << "Funds would go into overdraft, Enter a valid amount." << std::endl;
         }else{
             std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
@@ -127,7 +127,7 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
             }
         }
         
-    }while(balance-amount < 500 || amount != -1);
+    }while(balance-amount < balance*0.1 || amount != -1);
     display(); 
 }
 
