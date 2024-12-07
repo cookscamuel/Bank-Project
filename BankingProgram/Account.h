@@ -21,7 +21,7 @@ protected:
 public:
 
     // Constructor for the Account class that grabs the balance from the database
-    Account(int aN,sqlite3 *dbHelper): accountNumber(accountNumber){       
+    Account(int aN,sqlite3 *dbHelper): accountNumber(aN){       
         
         int dbStatus = sqlite3_open("bank_system.db", &dbHelper);
 
@@ -30,7 +30,7 @@ public:
         const char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
 
         //grabbing balance from the database based on the passed in account number
-        std::string sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
+        std::string sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(aN);
 
         // checking if the database opened correctly
         if (dbStatus != SQLITE_OK) {
