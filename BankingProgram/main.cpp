@@ -365,39 +365,38 @@ int main() {
                             else {
                                 std::string sqlSelect = "SELECT account_number, type_id FROM active_accounts WHERE user_id = '" + std::to_string(user->id) + "' AND account_number = '" + selection + "';";
                                 sqlite3_stmt* stmt;
-                                bool resultsFound = false; // Used to display a message if the account number was not found.
 
                                 dbStatus = sqlite3_prepare_v2(dbHandler, sqlSelect.c_str(), -1, &stmt, nullptr);
                                 if (dbStatus != SQLITE_OK) {
                                     std::cout << " An error occurred while selecting your account.\n Please try again later." << std::endl;
                                 }
 
-                                while ((dbStatus = sqlite3_step(stmt)) == SQLITE_ROW) {
-                                    resultsFound = true;
+                                if ((dbStatus = sqlite3_step(stmt)) == SQLITE_ROW) {
 
                                     int account_number = sqlite3_column_int(stmt, 0);
                                     int type_id = sqlite3_column_int(stmt, 1);
 
-                                    std::cout << " YOU SELECTED ACCOUNT" << account_number << " OF TYPE " << type_id << std::endl;
-                                    std::cout << " Press any key to continue...";
+                                    sqlite3_finalize(stmt);
+
                                     if (type_id == 1) {
+                                        sqlite3_exec(dbHandler, "COMMIT;", nullptr, nullptr, &errorMessage);
                                         CheckingAccount chequings(account_number, dbHandler);
                                         chequings.display();
+                                        chequings.deposit(dbHandler);
+                                        system("pause >nul");
                                     }
                                     else if (type_id == 2) {
                                         SavingsAccount savings(account_number, dbHandler);
+                                        std::cout << "Did it work?" << std::endl;
+                                        system("pause >nul");
                                     }
                                     else if (type_id == 3) {
                                         FixedDepositAccount fixed(account_number, dbHandler);
+                                        std::cout << "Did it work?" << std::endl;
+                                        system("pause >nul");
                                     }
                                     system("pause >nul");
 
-                                }
-
-                                if (!resultsFound) {
-                                    std::cout << " Account " << selection << " not found.\n Please ensure the account number is correct." << std::endl;
-                                    std::cout << " Press any key to continue...";
-                                    system("pause >nul");
                                 }
                             }
 
@@ -448,7 +447,7 @@ int main() {
             dbStatus = sqlite3_exec(dbHandler, registerQuery.c_str(), 0, 0, &errorMessage);
 
             if (dbStatus != SQLITE_OK) {
-                std::cout << " There was an error creating your account.\n This email may already be in use." << std::endl;
+                std::cout << " There was an error creating your account.\n This email may already be in use." << errorMessage << std::endl;
             }
             else {
                 std::cout << " Account created!" << std::endl;
