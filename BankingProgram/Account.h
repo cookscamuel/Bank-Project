@@ -57,7 +57,6 @@ public:
             exit(1);
         }
         sqlite3_finalize(stmt); // finalizing the statement
-        sqlite3_close(dbHelper);
 
        
     };
