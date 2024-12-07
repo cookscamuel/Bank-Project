@@ -23,7 +23,7 @@ public:
     // Constructor for the Account class that grabs the balance from the database
     Account(int aN,sqlite3 *dbHelper): accountNumber(aN){       
         
-        int dbStatus = sqlite3_open("bank_system.db", &dbHelper);
+        int dbStatus; // variable that holds the status of the database
 
         sqlite3_stmt* stmt; // variable that holds the sql statement results
 
