@@ -21,7 +21,7 @@ protected:
 public:
 
     // Constructor for the Account class that grabs the balance from the database
-    Account(int accountNumber,sqlite3 *dbHelper): accountNumber(accountNumber){       
+    Account(int aN,sqlite3 *dbHelper): accountNumber(accountNumber){       
         
         int dbStatus = sqlite3_open("bank_system.db", &dbHelper);
 
@@ -64,9 +64,9 @@ public:
     ~Account() = default;
 
     // virtual functions that will be overridden by the derived classes but will do very similar things
-    void virtual withdraw(sqlite3 *dbHandler); // subtracts from the balance and updates the database and then updates the variable
-    void virtual deposit(sqlite3 *dbHandler);  // adds to the balance and updates the database and then updates the variable
-    void virtual display(); //displays the account number and the balance
+    virtual void withdraw(sqlite3 *dbHandler) = 0; // subtracts from the balance and updates the database and then updates the variable
+    virtual void deposit(sqlite3 *dbHandler) = 0;  // adds to the balance and updates the database and then updates the variable
+    virtual void display() = 0; //displays the account number and the balance
 };
 
 #endif
