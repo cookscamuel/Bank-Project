@@ -445,8 +445,8 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
 
     
 
-    if (amount > balance*0.1 || amount < 0){
-        std::cout << "Insufficient funds." << std::endl;
+    if (balance-amount < balance*0.1 || amount < 0){
+        std::cout << "Funds would go into overdraft or Invalid Amount (negative)" << std::endl;
     }else{
         if (accountNumber == accountNumber2){
             std::cout << "You can't transfer to the same account." << std::endl;
@@ -467,7 +467,6 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
 
         dbStatus = sqlite3_step(stmt);
 
-        // sqlite3_finalize(stmt);
 
         //exits the function if the account to transfer to doesn't exist or the query didn't return any results
         if(dbStatus == SQLITE_ROW){
