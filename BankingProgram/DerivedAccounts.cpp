@@ -281,9 +281,9 @@ void CheckingAccount::deposit(sqlite3 *dbHandler){
             
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
            
-            int dbStatus = sqlite3_open("bank_system.db", &dbHandler);
+            // int dbStatus = sqlite3_open("bank_system.db", &dbHandler);
 
-            dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
+             int dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
             if (dbStatus == SQLITE_OK){
                 std::cout << "Deposit successful." << std::endl;
