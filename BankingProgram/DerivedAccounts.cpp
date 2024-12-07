@@ -37,10 +37,8 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
             
 
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
-           
-            int dbStatus = sqlite3_open("bank_system.db", &dbHandler);
 
-            dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
+            int dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
             //check for succesfull updating
             if (dbStatus != SQLITE_OK) {
@@ -55,13 +53,13 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    sqlite3_close(dbHandler);
+                    exit(1);
                 }
 
                 dbStatus = sqlite3_step(stmt);
 
                 if(dbStatus == SQLITE_ROW){
-                    balance = sqlite3_column_int(stmt, 0);
+                    balance = sqlite3_column_double(stmt, 0);
                 }else{
                     std::cout << "No Data Found" << std::endl;
                     break;
@@ -101,9 +99,8 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
             
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
            
-            int dbStatus = sqlite3_open("bank_system.db", &dbHandler);
 
-            dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
+            int dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
             if (dbStatus != SQLITE_OK) {
                 std::cout << "There was an error udating balance: " << errorMessage << std::endl;
@@ -116,13 +113,13 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    sqlite3_close(dbHandler);
+                    exit(1);
                 }
 
                 dbStatus = sqlite3_step(stmt);
 
                 if(dbStatus == SQLITE_ROW){
-                    balance = sqlite3_column_int(stmt, 0);
+                    balance = sqlite3_column_double(stmt, 0);
                 }else{
                     std::cout << "No Data Found" << std::endl;
                     break;
@@ -161,10 +158,8 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
             std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount + calculatePenalty()) + " WHERE account_number = " + std::to_string(accountNumber);
             
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
-           
-            int dbStatus = sqlite3_open("bank_system.db", &dbHandler);
 
-            dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
+            int dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
             
 
             if (dbStatus != SQLITE_OK) {
@@ -178,13 +173,13 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    sqlite3_close(dbHandler);
+                    exit(1);
                 }
 
                 dbStatus = sqlite3_step(stmt);
 
                 if(dbStatus == SQLITE_ROW){
-                    balance = sqlite3_column_int(stmt, 0);
+                    balance = sqlite3_column_double(stmt, 0);
                 }else{
                     std::cout << "No Data Found" << std::endl;
                    break;
@@ -219,10 +214,8 @@ void SavingsAccount::deposit(sqlite3 *dbHandler){
             std::string sql = "UPDATE active_accounts SET balance = balance + " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
             
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
-           
-            int dbStatus = sqlite3_open("bank_system.db", &dbHandler);
 
-            dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
+            int dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
             // updating balance member variable
             if (dbStatus == SQLITE_OK){
@@ -235,13 +228,13 @@ void SavingsAccount::deposit(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    sqlite3_close(dbHandler);
+                    exit(1);
                 }
 
                 dbStatus = sqlite3_step(stmt);
 
                 if(dbStatus == SQLITE_ROW){
-                    balance = sqlite3_column_int(stmt, 0);
+                    balance = sqlite3_column_double(stmt, 0);
                 }else{
                     std::cout << "No Data Found" << std::endl;
                    break;
@@ -280,8 +273,6 @@ void CheckingAccount::deposit(sqlite3 *dbHandler){
             std::string sql = "UPDATE active_accounts SET balance = balance + " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
             
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
-           
-            // int dbStatus = sqlite3_open("bank_system.db", &dbHandler);
 
             int dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
@@ -295,13 +286,13 @@ void CheckingAccount::deposit(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    sqlite3_close(dbHandler);
+                    exit(1);
                 }
 
                 dbStatus = sqlite3_step(stmt);
 
                 if(dbStatus == SQLITE_ROW){
-                    balance = sqlite3_column_int(stmt, 0);
+                    balance = sqlite3_column_double(stmt, 0);
                 }else{
                     std::cout << "No Data Found" << std::endl;
                    break;
@@ -340,10 +331,8 @@ void FixedDepositAccount::deposit(sqlite3 *dbHandler){
             std::string sql = "UPDATE active_accounts SET balance = balance + " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
             
             char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
-           
-            int dbStatus = sqlite3_open("bank_system.db", &dbHandler);
 
-            dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
+            int dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
             if (dbStatus == SQLITE_OK){
                 std::cout << "Deposit successful." << std::endl;
@@ -355,13 +344,13 @@ void FixedDepositAccount::deposit(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    sqlite3_close(dbHandler);
+                    exit(1);
                 }
 
                 dbStatus = sqlite3_step(stmt);
 
                 if(dbStatus == SQLITE_ROW){
-                    balance = sqlite3_column_int(stmt, 0);
+                    balance = sqlite3_column_double(stmt, 0);
                 }else{
                     std::cout << "No Data Found" << std::endl;
                    break;
@@ -385,20 +374,20 @@ void FixedDepositAccount::deposit(sqlite3 *dbHandler){
 // add menus for doing stuff with the accounts
 void SavingsAccount::display(){ //displays the account number, balance, account type, and the interest that would be earned
     std::cout << "Account Number: " << accountNumber << std::endl;
-    std::cout << "Balance: " << balance << std::endl;
+    std::cout << "Balance: $" << balance << std::endl;
     std::cout << "Account Type: Savings" << std::endl;
     std::cout << "Interest Earnings: " << calculateInterest() << "with a rate of " << interestRate*100 << "%" << std::endl;
 }
 
 void CheckingAccount::display(){ //displays the account number, balance, and account type
     std::cout << "Account Number: " << accountNumber << std::endl;
-    std::cout << "Balance: " << balance << std::endl;
+    std::cout << "Balance: $" << balance << std::endl;
     std::cout << "Account Type: Checking" << std::endl;
 }
 
 void FixedDepositAccount::display(){ //displays the account number, balance, account type, and the penalty that would be charged
     std::cout << "Account Number: " << accountNumber << std::endl;
-    std::cout << "Balance: " << balance << std::endl;
+    std::cout << "Balance: $" << balance << std::endl;
     std::cout << "Account Type: Fixed Deposit" << std::endl;
     std::cout << "Penalty: 7.5%" << std::endl;
 }
@@ -459,9 +448,8 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
         std::string sql2 = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
         
         char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
-        int dbStatus = sqlite3_open("bank_system.db", &dbHandler);
 
-        dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
+        int dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
         dbStatus = sqlite3_exec(dbHandler, sql2.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
         if (dbStatus != SQLITE_OK) {
@@ -475,13 +463,13 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
 
             if (dbStatus != SQLITE_OK){
                 std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                sqlite3_close(dbHandler);
+                exit(1);
             }
 
             dbStatus = sqlite3_step(stmt);
 
             if(dbStatus == SQLITE_ROW){
-                balance = sqlite3_column_int(stmt, 0);
+                balance = sqlite3_column_double(stmt, 0);
             }else{
                 std::cout << "No Data Found" << std::endl;
             }
