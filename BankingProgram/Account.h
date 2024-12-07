@@ -32,11 +32,6 @@ public:
         //grabbing balance from the database based on the passed in account number
         std::string sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(aN);
 
-        // checking if the database opened correctly
-        if (dbStatus != SQLITE_OK) {
-            std::cout << "There was an error opening the database:" << sqlite3_errmsg(dbHelper) << std::endl;
-        }
-
         //preparing the query
         dbStatus = sqlite3_prepare_v2(dbHelper, sql.c_str(), -1, &stmt, &errorMessage);
 
