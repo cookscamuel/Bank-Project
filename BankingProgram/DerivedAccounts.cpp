@@ -69,7 +69,6 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
         }
         
     }while(amount > balance || amount != -1);
-    display();// calls the display function
 }
 
 //functionally exactly the same as the savings account withdraw function
@@ -130,7 +129,6 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
         }
         
     }while(balance-amount < balance*0.1 || amount != -1 );
-    display(); 
 }
 
 //functionally the same as the savings account withdraw function but with a penalty applied onto the balance when withdrawing
@@ -191,7 +189,6 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
         }
         
     }while(amount > balance || amount != -1);
-    display();
 }
 
 //Deposit Function Implementations
@@ -254,7 +251,6 @@ void SavingsAccount::deposit(sqlite3 *dbHandler){
             std::cout << "Invalid amount." << std::endl;
         }
     }while(amount != -1);
-    display();
 }
 
 void CheckingAccount::deposit(sqlite3 *dbHandler){
@@ -312,7 +308,6 @@ void CheckingAccount::deposit(sqlite3 *dbHandler){
             std::cout << "Invalid amount." << std::endl;
         }
     }while(amount != -1);
-    display();
 }
 
 void FixedDepositAccount::deposit(sqlite3 *dbHandler){
@@ -370,7 +365,6 @@ void FixedDepositAccount::deposit(sqlite3 *dbHandler){
             std::cout << "Invalid amount." << std::endl;
         }
     }while(amount != -1);
-    display();
 }
 
 //Display Function Implementations
