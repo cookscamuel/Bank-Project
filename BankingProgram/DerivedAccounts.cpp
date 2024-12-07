@@ -480,7 +480,8 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
             display();
             return;
         }
-
+        sqlite3_finalize(stmt);
+        
         std::string sql = "UPDATE active_accounts SET balance = balance + " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber2);
         std::string sql2 = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
         
