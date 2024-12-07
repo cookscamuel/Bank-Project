@@ -54,7 +54,7 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    exit(1);
+                    return;
                 }
 
                 dbStatus = sqlite3_step(stmt);
@@ -115,7 +115,7 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    exit(1);
+                    return;
                 }
 
                 dbStatus = sqlite3_step(stmt);
@@ -176,7 +176,7 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    exit(1);
+                    return;
                 }
 
                 dbStatus = sqlite3_step(stmt);
@@ -231,7 +231,7 @@ void SavingsAccount::deposit(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    exit(1);
+                    return;
                 }
 
                 dbStatus = sqlite3_step(stmt);
@@ -289,7 +289,7 @@ void CheckingAccount::deposit(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    exit(1);
+                    return;
                 }
 
                 dbStatus = sqlite3_step(stmt);
@@ -347,7 +347,7 @@ void FixedDepositAccount::deposit(sqlite3 *dbHandler){
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    exit(1);
+                    return;
                 }
 
                 dbStatus = sqlite3_step(stmt);
@@ -462,7 +462,7 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
 
         if (dbStatus != SQLITE_OK){
             std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-            exit(1);
+            return;
         }
 
         dbStatus = sqlite3_step(stmt);
@@ -481,7 +481,7 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
             return;
         }
         sqlite3_finalize(stmt);
-        
+
         std::string sql = "UPDATE active_accounts SET balance = balance + " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber2);
         std::string sql2 = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
         
@@ -505,7 +505,7 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
 
                 if (dbStatus != SQLITE_OK){
                     std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
-                    exit(1);
+                    return;
                 }
 
                 dbStatus = sqlite3_step(stmt);
