@@ -28,7 +28,8 @@ int main() {
 
     if (dbStatus != 0) { // Check to see if the database connection failed.
         std::cout << "An error occurred while trying to access the database.\nExiting..." << std::endl;
-        system("pause");
+        std::cout << " Press any key to continue...";
+        system("pause >nul");
         exit(0); // Exit the program.
     }
 
@@ -355,11 +356,49 @@ int main() {
                                 std::cout << " An error occurred while fetching your accounts." << std::endl;
                             }
                             sqlite3_finalize(stmt);
-                            std::cout << "\n Please enter your selection, or\n enter 0 to return to My Account: ";
+                            std::cout << "\n Please enter the account number, or\n enter 0 to return to My Account: ";
                             getline(std::cin, selection);
 
                             if (selection == "0") {
                                 break;
+                            }
+                            else {
+                                std::string sqlSelect = "SELECT account_number, type_id FROM active_accounts WHERE user_id = '" + std::to_string(user->id) + "' AND account_number = '" + selection + "';";
+                                sqlite3_stmt* stmt;
+                                bool resultsFound = false; // Used to display a message if the account number was not found.
+
+                                dbStatus = sqlite3_prepare_v2(dbHandler, sqlSelect.c_str(), -1, &stmt, nullptr);
+                                if (dbStatus != SQLITE_OK) {
+                                    std::cout << " An error occurred while selecting your account.\n Please try again later." << std::endl;
+                                }
+
+                                while ((dbStatus = sqlite3_step(stmt)) == SQLITE_ROW) {
+                                    resultsFound = true;
+
+                                    int account_number = sqlite3_column_int(stmt, 0);
+                                    int type_id = sqlite3_column_int(stmt, 1);
+
+                                    std::cout << " YOU SELECTED ACCOUNT" << account_number << " OF TYPE " << type_id << std::endl;
+                                    std::cout << " Press any key to continue...";
+                                    if (type_id == 1) {
+                                        CheckingAccount chequings(account_number, dbHandler);
+                                        chequings.display();
+                                    }
+                                    else if (type_id == 2) {
+                                        SavingsAccount savings(account_number, dbHandler);
+                                    }
+                                    else if (type_id == 3) {
+                                        FixedDepositAccount fixed(account_number, dbHandler);
+                                    }
+                                    system("pause >nul");
+
+                                }
+
+                                if (!resultsFound) {
+                                    std::cout << " Account " << selection << " not found.\n Please ensure the account number is correct." << std::endl;
+                                    std::cout << " Press any key to continue...";
+                                    system("pause >nul");
+                                }
                             }
 
 
