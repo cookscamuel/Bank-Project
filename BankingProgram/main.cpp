@@ -311,7 +311,6 @@ int main() {
                         system("cls");
 
                     }
-///////////////////////////////////////////////////////////////// MANAGE ACCOUNT //////////////////////////////////////////////////////////
                     else if (selection == "3") { // MANAGE ACCOUNT
                         do {
                             system("cls");
@@ -356,6 +355,7 @@ int main() {
                                 std::cout << " An error occurred while fetching your accounts." << std::endl;
                             }
                             sqlite3_finalize(stmt);
+///////////////////////////////////////////////////////////////// WORK AREA //////////////////////////////////////////////////////////
                             std::cout << "\n Please enter the account number, or\n enter 0 to return to My Account: ";
                             getline(std::cin, selection);
 
@@ -379,11 +379,9 @@ int main() {
                                     sqlite3_finalize(stmt);
 
                                     if (type_id == 1) {
-                                        sqlite3_exec(dbHandler, "COMMIT;", nullptr, nullptr, &errorMessage);
                                         CheckingAccount chequings(account_number, dbHandler);
                                         chequings.display();
                                         chequings.deposit(dbHandler);
-                                        system("pause >nul");
                                     }
                                     else if (type_id == 2) {
                                         SavingsAccount savings(account_number, dbHandler);
@@ -395,6 +393,7 @@ int main() {
                                         std::cout << "Did it work?" << std::endl;
                                         system("pause >nul");
                                     }
+                                    std::cout << "Press any key to continue..." << std::endl;
                                     system("pause >nul");
 
                                 }
