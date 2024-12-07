@@ -444,12 +444,40 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
     if (amount > balance || amount < 0){
         std::cout << "Insufficient funds." << std::endl;
     }else{
+        //checking if the account to transfer to exists
+        std::string sqlCount = "SELECT COUNT(*) FROM active_accounts WHERE account_number = " + std::to_string(accountNumber2);
+        sqlite3_stmt* stmt;
+        
+        int dbStatus = sqlite3_prepare_v2(dbHandler, sqlCount.c_str(), -1, &stmt, nullptr);
+
+        if (dbStatus != SQLITE_OK){
+            std::cout << "There was an error preparing the statement: " << sqlite3_errmsg(dbHandler) << std::endl;
+            exit(1);
+        }
+
+        dbStatus = sqlite3_step(stmt);
+
+        sqlite3_finalize(stmt);
+
+        //exits the function if the account to transfer to doesn't exist or the query didn't return any results
+        if(dbStatus == SQLITE_ROW){
+            if (sqlite3_column_int(stmt, 0) == 0){
+                std::cout << "Account not found." << std::endl;
+                display();
+                return;
+            }
+        }else{
+            std::cout << "No Data Found" << std::endl;
+            display();
+            return;
+        }
+
         std::string sql = "UPDATE active_accounts SET balance = balance + " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber2);
         std::string sql2 = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
         
         char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
 
-        int dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
+        dbStatus = sqlite3_exec(dbHandler, sql.c_str(), 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
         
         if (dbStatus != SQLITE_OK) {
             std::cout << "There was an error udating balance: " << errorMessage << std::endl;
