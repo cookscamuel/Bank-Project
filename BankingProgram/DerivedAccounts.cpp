@@ -467,7 +467,7 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
 
         dbStatus = sqlite3_step(stmt);
 
-        sqlite3_finalize(stmt);
+        // sqlite3_finalize(stmt);
 
         //exits the function if the account to transfer to doesn't exist or the query didn't return any results
         if(dbStatus == SQLITE_ROW){
