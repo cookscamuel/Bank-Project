@@ -45,6 +45,7 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
                 std::cout << "There was an error udating balance: " << errorMessage << std::endl;
             }
             else {
+                std::cout << "Withdrawal successful." << std::endl;
                 // updates the balance member variable with the updated balance from the database
                 sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
                 sqlite3_stmt* stmt;
@@ -106,6 +107,7 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
                 std::cout << "There was an error udating balance: " << errorMessage << std::endl;
             }
             else {
+                std::cout << "Withdrawal successful." << std::endl;
                 sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
                 sqlite3_stmt* stmt;
 
@@ -166,6 +168,7 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
                 std::cout << "There was an error udating balance: " << errorMessage << std::endl;
             }
             else {
+                std::cout << "Withdrawal successful." << std::endl;
                 sql = "SELECT balance FROM active_accounts WHERE account_number = " + std::to_string(accountNumber);
                 sqlite3_stmt* stmt;
 
