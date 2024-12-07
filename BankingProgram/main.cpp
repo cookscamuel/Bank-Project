@@ -10,13 +10,6 @@
 
 #include <iostream>
 
-/*
-    Inserting Data:
-        Users must have unique email addresses and passwords.
-        Account types must be unique
-
-*/
-
 
 int main() {
 
@@ -62,7 +55,7 @@ int main() {
     char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
     dbStatus = sqlite3_exec(dbHandler, createTables, 0, 0, &errorMessage); // this will return a 0 if the query executes successfully.
 
-    if (dbStatus != 0) {
+    if (dbStatus != 0) { // Check for any issues making the database.
         std::cout << "An error occured while creating tables: " << errorMessage << std::endl;
         exit(0);
     }
@@ -95,10 +88,11 @@ int main() {
     sqlite3_exec(dbHandler, populate2, 0, 0, &errorMessage);
     sqlite3_exec(dbHandler, populate3, 0, 0, &errorMessage);
 
+    // populate1 and populate3 are not necessary, they could be removed entirely and there would be no accounts.
 
 /////////////////////////////////////////////////////////// MAIN MENU STARTS HERE //////////////////////////////////////////////////////////////////////
-    system("cls");
-    do {
+    system("cls"); // Clear the terminal, this happens a lot in this program.
+    do { // Print the main menu for the user.
 
         std::string selection;
 
@@ -355,7 +349,6 @@ int main() {
                                 std::cout << " An error occurred while fetching your accounts." << std::endl;
                             }
                             sqlite3_finalize(stmt);
-///////////////////////////////////////////////////////////////// WORK AREA //////////////////////////////////////////////////////////
                             std::cout << "\n Please enter the account number, or\n enter 0 to return to My Account: ";
                             getline(std::cin, selection);
 
@@ -377,29 +370,95 @@ int main() {
                                     int type_id = sqlite3_column_int(stmt, 1);
 
                                     sqlite3_finalize(stmt);
+                                    system("cls");
 
+///////////////////////////////////////////////////////////////// WORK AREA //////////////////////////////////////////////////////////
                                     if (type_id == 1) {
                                         CheckingAccount chequings(account_number, dbHandler);
-                                        chequings.display();
-                                        chequings.deposit(dbHandler);
+                                        do {
+                                            selection = "";
+                                            chequings.display();
+                                            std::cout << "\n What would you like to do?" << std::endl;
+                                            std::cout << " 1 - Deposit" << std::endl;
+                                            std::cout << " 2 - Withdraw" << std::endl;
+                                            std::cout << " 3 - Transfer Funds" << std::endl;
+                                            std::cout << " 4 - Back\n Please enter your selection: ";
+                                            getline(std::cin, selection);
+
+                                            if (selection == "1") {
+                                                chequings.deposit(dbHandler);
+                                            }
+                                            else if (selection == "2") {
+                                                chequings.withdraw(dbHandler);
+                                            }
+                                            else if (selection == "3") {
+                                                chequings.transferFunds(dbHandler);
+                                                system("pause");
+                                            }
+                                            else if (selection == "4") {
+                                                break;
+                                            }
+                                            else {
+                                                system("cls");
+                                            }
+
+                                        } while (true);
                                     }
                                     else if (type_id == 2) {
                                         SavingsAccount savings(account_number, dbHandler);
-                                        std::cout << "Did it work?" << std::endl;
-                                        system("pause >nul");
+                                        do {
+                                            selection = "";
+                                            savings.display();
+                                            std::cout << "\n What would you like to do?" << std::endl;
+                                            std::cout << " 1 - Deposit" << std::endl;
+                                            std::cout << " 2 - Withdraw" << std::endl;
+                                            std::cout << " 3 - Back\n Please enter your selection: ";
+                                            getline(std::cin, selection);
+
+                                            if (selection == "1") {
+                                                savings.deposit(dbHandler);
+                                            }
+                                            else if (selection == "2") {
+                                                savings.withdraw(dbHandler);
+                                            }
+                                            else if (selection == "3") {
+                                                break;
+                                            }
+                                            else {
+                                                system("cls");
+                                            }
+
+                                        } while (true);
                                     }
                                     else if (type_id == 3) {
                                         FixedDepositAccount fixed(account_number, dbHandler);
-                                        std::cout << "Did it work?" << std::endl;
-                                        system("pause >nul");
-                                    }
-                                    std::cout << "Press any key to continue..." << std::endl;
-                                    system("pause >nul");
+                                        do {
+                                            selection = "";
+                                            fixed.display();
+                                            std::cout << "\n What would you like to do?" << std::endl;
+                                            std::cout << " 1 - Deposit" << std::endl;
+                                            std::cout << " 2 - Withdraw" << std::endl;
+                                            std::cout << " 3 - Back\n Please enter your selection: ";
+                                            getline(std::cin, selection);
 
+                                            if (selection == "1") {
+                                                fixed.deposit(dbHandler);
+                                            }
+                                            else if (selection == "2") {
+                                                fixed.withdraw(dbHandler);
+
+                                            }
+                                            else if (selection == "3") {
+                                                break;
+                                            }
+                                            else {
+                                                system("cls");
+                                            }
+
+                                        } while (true);
+                                    }
                                 }
                             }
-
-
                         } while (true);
                         system("cls");
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -446,7 +505,7 @@ int main() {
             dbStatus = sqlite3_exec(dbHandler, registerQuery.c_str(), 0, 0, &errorMessage);
 
             if (dbStatus != SQLITE_OK) {
-                std::cout << " There was an error creating your account.\n This email may already be in use." << errorMessage << std::endl;
+                std::cout << " There was an error creating your account.\n This email may already be in use." << std::endl;
             }
             else {
                 std::cout << " Account created!" << std::endl;
