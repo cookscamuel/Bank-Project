@@ -29,8 +29,8 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
 
         
 
-        if (amount > balance){ //error message for when the user tries to withdraw more than they have
-            std::cout << "Insufficient funds." << std::endl;
+        if (amount > balance || amount < 0){ //error message for when the user tries to withdraw more than they have
+            std::cout << "Insufficient funds or invalid amount (negative), Enter a valid amount." << std::endl;
         }else{
             //updates balance value in database
             std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
@@ -68,7 +68,7 @@ void SavingsAccount::withdraw(sqlite3 *dbHandler){
             }
         }
         
-    }while(amount > balance || amount < 0);
+    }while(amount > balance || amount != -1);
     display();// calls the display function
 }
 
@@ -93,7 +93,7 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
         
         // rather than checking for total balance, we check for overdraft
         if (balance-amount < balance*0.1 || amount < 0){
-            std::cout << "Funds would go into overdraft, Enter a valid amount." << std::endl;
+            std::cout << "Funds would go into overdraft or Invalid Amount (negative), Enter a valid amount." << std::endl;
         }else{
             std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
             
@@ -129,7 +129,7 @@ void CheckingAccount::withdraw(sqlite3 *dbHandler){
             }
         }
         
-    }while(balance-amount < balance*0.1 || amount != -1);
+    }while(balance-amount < balance*0.1 || amount != -1 );
     display(); 
 }
 
@@ -154,8 +154,8 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
 
         
 
-        if (amount > balance){
-            std::cout << "Insufficient funds." << std::endl;
+        if (amount > balance || (amount + calculatePenalty()) > balance || amount < 0 ){
+            std::cout << "Funds would go into overdraft or Invalid Amount (negative) or the penalty would put your account into negative, Enter a valid amount." << std::endl;
         }else{                                                                  // the total amount the will be subtracted from the balance with amount and the penalty
             std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount + calculatePenalty()) + " WHERE account_number = " + std::to_string(accountNumber);
             
@@ -393,6 +393,7 @@ void FixedDepositAccount::display(){ //displays the account number, balance, acc
     std::cout << "Balance: $" << balance << std::endl;
     std::cout << "Account Type: Fixed Deposit" << std::endl;
     std::cout << "Penalty: 7.5%" << std::endl;
+    std::cout << "Penalty Amount: " << calculatePenalty() << std::endl;
 }
 
 //Specific Function Implementions
