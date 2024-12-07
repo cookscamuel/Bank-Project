@@ -409,12 +409,12 @@ double SavingsAccount::calculateInterest(){ //calculates the interest-rate based
 
 void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to transfer funds from the checking account to another account
     double amount;
-    int accountNumber;
+    int accountNumber2;
 
     
     do{ 
         std::cout << "Enter the account number you would like to transfer funds to: ";
-        std::cin >> accountNumber;
+        std::cin >> accountNumber2;
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear out whatever is in the buffer.
@@ -444,7 +444,7 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
     if (amount > balance || amount < 0){
         std::cout << "Insufficient funds." << std::endl;
     }else{
-        std::string sql = "UPDATE active_accounts SET balance = balance + " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
+        std::string sql = "UPDATE active_accounts SET balance = balance + " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber2);
         std::string sql2 = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount) + " WHERE account_number = " + std::to_string(accountNumber);
         
         char *errorMessage = nullptr; // This is used to display the resulting error message (if there is an error).
