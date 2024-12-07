@@ -155,7 +155,7 @@ void FixedDepositAccount::withdraw(sqlite3 *dbHandler){
         
 
         if (amount > balance || (amount + calculatePenalty()) > balance || amount < 0 ){
-            std::cout << "Funds would go into overdraft or Invalid Amount (negative) or the penalty would put your account into negative, Enter a valid amount." << std::endl;
+            std::cout << "Insufficient funds or invalid amount (negative), Enter a valid amount." << std::endl;
         }else{                                                                  // the total amount the will be subtracted from the balance with amount and the penalty
             std::string sql = "UPDATE active_accounts SET balance = balance - " + std::to_string(amount + calculatePenalty()) + " WHERE account_number = " + std::to_string(accountNumber);
             
@@ -379,7 +379,7 @@ void SavingsAccount::display(){ //displays the account number, balance, account 
     std::cout << "Account Number: " << accountNumber << std::endl;
     std::cout << "Balance: $" << balance << std::endl;
     std::cout << "Account Type: Savings" << std::endl;
-    std::cout << "Interest Earnings: " << calculateInterest() << "with a rate of " << interestRate*100 << "%" << std::endl;
+    std::cout << "Interest Earnings: $" << calculateInterest() << " with a rate of " << interestRate*100 << "%" << std::endl;
 }
 
 void CheckingAccount::display(){ //displays the account number, balance, and account type
@@ -393,7 +393,7 @@ void FixedDepositAccount::display(){ //displays the account number, balance, acc
     std::cout << "Balance: $" << balance << std::endl;
     std::cout << "Account Type: Fixed Deposit" << std::endl;
     std::cout << "Penalty: 7.5%" << std::endl;
-    std::cout << "Penalty Amount: " << calculatePenalty() << std::endl;
+    std::cout << "Penalty Amount: $" << calculatePenalty() << std::endl;
 }
 
 //Specific Function Implementions
@@ -445,9 +445,15 @@ void CheckingAccount::transferFunds(sqlite3 *dbHandler){ // allows the user to t
 
     
 
-    if (amount > balance || amount < 0){
+    if (amount > balance*0.1 || amount < 0){
         std::cout << "Insufficient funds." << std::endl;
     }else{
+        if (accountNumber == accountNumber2){
+            std::cout << "You can't transfer to the same account." << std::endl;
+            display();
+            return;
+        }
+        
         //checking if the account to transfer to exists
         std::string sqlCount = "SELECT COUNT(*) FROM active_accounts WHERE account_number = " + std::to_string(accountNumber2);
         sqlite3_stmt* stmt;
